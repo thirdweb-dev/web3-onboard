@@ -284,6 +284,8 @@
     </div>
   {/if}
   <div>
-    {@html poweredByThirdweb}
+    <a href="https://thirdweb.com/connect?utm_source=cw_text" target="_blank">
+      {@html poweredByThirdweb}
+    </a>
   </div>
 </div>
