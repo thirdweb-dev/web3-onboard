@@ -19,8 +19,7 @@ jobs:
       - name: Setup Nodejs and yarn
         uses: actions/setup-node@v2
         with:
-          node-version: "20.18.0"
-          cache: yarn
+          node-version: 22
 
       - name: Install dependencies
         run: yarn
