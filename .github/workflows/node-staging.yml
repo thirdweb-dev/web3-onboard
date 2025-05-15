@@ -1,0 +1,175 @@
+name: Node Packages – Staging (Alpha ➜ next)
+
+on:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+  id-token: write
+  packages: write
+
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+jobs:
+  build-and-publish:
+    name: Build & publish alpha ${{ matrix.package }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package: core
+            node: 16.15.1
+          - package: common
+            node: 16.13.1
+          - package: fortmatic
+            node: 16.13.1
+          - package: gnosis
+            node: 16.13.1
+          - package: injected
+            node: 16.13.1
+          - package: frame
+            node: 16.13.1
+          - package: keepkey
+            node: 16.20.2
+          - package: keystone
+            node: 18.0.0
+          - package: ledger
+            node: 18.0.0
+          - package: mew
+            node: 16.13.1
+          - package: mew-wallet
+            node: 16.13.1
+          - package: portis
+            node: 16.13.1
+          - package: torus
+            node: 16.18.1
+          - package: trezor
+            node: 20.18.0
+          - package: trust
+            node: 16.13.1
+          - package: okx
+            node: 16.13.1
+          - package: frontier
+            node: 16.13.1
+          - package: walletconnect
+            node: 18.0.0
+          - package: walletlink
+            node: 16.13.1
+          - package: react
+            node: 16.15.1
+          - package: magic
+            node: 16.13.1
+          - package: coinbase
+            node: 16.13.1
+          - package: web3auth
+            node: 18.0.0
+          - package: dcent
+            node: 16.13.1
+          - package: vue
+            node: 16.15.1
+          - package: gas
+            node: 16.13.1
+          - package: hw-common
+            node: 16.13.1
+          - package: sequence
+            node: 16.13.1
+          - package: tallyho
+            node: 16.13.1
+          - package: enkrypt
+            node: 16.13.1
+          - package: uauth
+            node: 18.0.0
+          - package: transaction-preview
+            node: 16.13.1
+          - package: zeal
+            node: 16.13.1
+          - package: phantom
+            node: 16.13.1
+          - package: xdefi
+            node: 16.13.1
+          - package: infinity-wallet
+            node: 16.13.1
+          - package: taho
+            node: 16.13.1
+          - package: unstoppable-resolution
+            node: 16.13.1
+          - package: cede-store
+            node: 16.13.1
+          - package: arcana-auth
+            node: 18.0.0
+          - package: blocto
+            node: 16.13.1
+          - package: venly
+            node: 18.18.2
+          - package: bitget
+            node: 16.13.1
+          - package: bitkeep
+            node: 16.13.1
+          - package: metamask
+            node: 18.18.2
+          - package: solid
+            node: 16.15.1
+          - package: para
+            node: 18.18.2
+          - package: particle-network
+            node: 18.0.0
+          - package: finoaconnect
+            node: 18.0.0
+          - package: wagmi
+            node: 18.0.0
+          - package: passport
+            node: 18.0.0
+          - package: bloom
+            node: 18.0.0
+          - package: keplr
+            node: 18.0.0
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: packages/${{ matrix.package }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          registry-url: https://registry.npmjs.org/
+
+      # ────── only publish *alpha* versions ──────
+      - id: version
+        run: echo "v=$(node -p 'require(\"./package.json\").version')" >> "$GITHUB_OUTPUT"
+
+      - name: Skip non‑alpha builds on develop
+        if: ${{ !contains(steps.version.outputs.v, '-alpha') }}
+        run: echo "Not an alpha – skipping publish."
+      # ───────────────────────────────────────────
+
+      - name: Cache Yarn
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/yarn
+            node_modules
+          key: ${{ runner.os }}-${{ matrix.node }}-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Generate workspace lock‑file
+        run: yarn generate-lock-entry >> yarn.lock
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Type‑check & build
+        run: |
+          yarn type-check
+          yarn build
+
+      - name: Publish to npm (next)
+        if: contains(steps.version.outputs.v, '-alpha')
+        run: npm publish --tag next --access public
