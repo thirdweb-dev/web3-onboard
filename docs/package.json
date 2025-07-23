@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite dev --port 3000",
-    "build": "export NODE_OPTIONS=--max-old-space-size=32768 && vite build",
+    "build": "export NODE_OPTIONS=--max-old-space-size=8192 && DEBUG=vite:* vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
