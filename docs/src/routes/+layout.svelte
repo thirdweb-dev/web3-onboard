@@ -28,7 +28,6 @@
       { title: 'Documentation', slug: '/docs', match: /\/docs/ },
       { title: 'Examples', slug: '/examples', match: /\/examples/ },
       { title: 'FAQ', slug: '/faq', match: /\/faq/ },
-      { title: 'Blog', slug: 'https://www.blocknative.com/blog/tag/web3-onboard' }
     ]
   }
 
@@ -71,8 +70,6 @@
     <div slot="navbar-right-alt">
       <div class="flex items-center">
         <ConnectWalletButton />
-        <SocialLink type="gitHub" href="//github.com/blocknative/web3-onboard" class="socialIcon" />
-        <SocialLink type="discord" href="//discord.com/invite/KZaBVME" class="socialIcon" />
       </div>
     </div>
 

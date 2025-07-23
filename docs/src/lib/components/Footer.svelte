@@ -25,7 +25,7 @@
     --padding="2rem"
   >
     <Flexbox --direction="row" --gap="2rem" --padding="0">
-      <a class="icon-link" href="//github.com/blocknative/web3-onboard" target="_blank">
+      <a class="icon-link" href="//github.com/thirdweb-dev/web3-onboard" target="_blank">
         <GitHubIcon width={iconSize} height={iconSize} />
         <span class="sr-only">Github</span>
       </a>
